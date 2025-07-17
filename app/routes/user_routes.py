@@ -3,6 +3,7 @@ from app.utils.auth import token_required  # Pakai token_required untuk otentika
 from app import db
 from sqlalchemy.sql import func
 from app.models import Deteksi
+import base64
 
 user_routes = Blueprint('user_routes', __name__)
 
@@ -41,16 +42,28 @@ def get_user_history(user_id):
         deteksi_list = Deteksi.query.filter_by(user_id=user_id).all()
 
         # Menyiapkan list deteksi dengan data yang dibutuhkan
-        history = [
-            {
-                "created_at": deteksi.created_at.strftime("%d %B %Y"),
-                "apnea_status": deteksi.apnea_status
-            }
-            for deteksi in deteksi_list
-        ]
+        # history = [
+        #     {
+        #         "created_at": deteksi.created_at.strftime("%d %B %Y"),
+        #         "apnea_status": deteksi.apnea_status,
+        #         "visual": deteksi.visual
+        #     }
+        #     for deteksi in deteksi_list
+        # ]
+        history_list = []
+        for deteksi in deteksi_list:
+            try:
+                with open(deteksi.visual, "rb") as f:
+                    img_base64 = base64.b64encode(f.read()).decode("utf-8")
+            except Exception as e:
+                return jsonify({"error":f"e"})
 
-        # Mengembalikan history dalam bentuk JSON
-        return jsonify({"history": history})
+            history_list.append({
+                "created_at": deteksi.created_at.strftime("%d %B %Y"),
+                "apnea_status": deteksi.apnea_status,
+                "visual": img_base64
+            })            
+        return jsonify({"history": history_list})
 
     except Exception as e:
         print("Error:", e)

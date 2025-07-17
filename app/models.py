@@ -22,7 +22,8 @@ class Deteksi(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    apnea_status = db.Column(db.String(20))  # Menyimpan status "apnea" atau "normal"
+    apnea_status = db.Column(db.String(20))
+    visual = db.Column(db.String(50))
 
     def __repr__(self):
         return f"<Deteksi User:{self.user_id} Status:{self.apnea_status}>"

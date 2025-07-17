@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 *.pyo
 versions/
+*.h5
+visualized_signals/
